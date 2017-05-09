@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome - {{ user.name }}</title>
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/680ef57b8e.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class='btn-toolbar pull-right'>
+          <div class='btn-group'>
+            <a href="/logout" class='btn btn-info btn-xs pull-right'><span class="glyphicon glyphicon-log-out"></span> Loggout</a>
+          </div>
+        </div>
+        <h3><span class="glyphicon glyphicon-user"></span> Welcome {{ user.name }}</h3>
+      </div>
+      <div class="row">
+        <div class="content">
+          <div class="col-md-5 col-md-offset well">
+            <h1>Quotes</h1>
+            <div class="quote_group">
+              <div class="col-sm-8 col-sm-offset well">
+                {% for quote in quotes %}
+                {% if user not in quote.fav_list.all%}
+                <p><b>{{ quote.quoted_by }}: </b></p>
+                <p>{{ quote.content }}</p>
+                <p><a href="/show_user/{{user.id}}">{{quote.posted_by.name}}</a></p>
+                <div class='btn-group'>
+                  <a href="/add_to_lists/{{quote.id}}" class='btn btn-info btn-xs pull-right'><span class="glyphicon glyphicon-plus"></span>Add to my favorite</a>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <hr>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5 col-md-offset-2 well">
+            <h1>Your Favorites</h1>
+            <div class="quote_group">
+              <div class="col-sm-8 col-sm-offset well">
+                {% for quote in quotes %}
+                {% if user in quote.fav_list.all %}
+                <p><b>{{quote.quoted_by}}: </b></p>
+                <p>{{quote.content}}</p>
+                <p><a href="/show_user/{{user.id}}">{{user.name}}</a></p>
+                <div class='btn-group'>
+                  <a href="/delete/{{quote.id}}" class='btn btn-info btn-xs pull-right'><span class="glyphicon glyphicon-plus"></span>Remove from my list</a>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <hr>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body-part">
+        <div class="form-group">
+          <div class="col-md-5 col-md-offset well" style="position: relative; right: 10px;">
+            <h3>Add Quotes</h3>
+            <form action="/add" method="post">
+              {% csrf_token %}
+              {% for message in messages %}
+                <p style="color: red;"><b>{{message}}</b></p>
+              {% endfor %}
+              <label for="quoted_by">Quoted By:</label>
+              <input type="text" name="quoted_by" class="form-control">
+              <label for="message">Messages:</label>
+              <textarea name="quote" class="form-control"></textarea>
+              <br>
+              <input type="submit" value="Add" class="btn btn-primary">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
